@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 15 21:12:59 2020
+
+@author: massi
+"""
+
+import gdal 
+import os 
+
+
+
+path_inp = r"D:\fiumi unsupervised\0_Ostiglia\\"
+path_out = r"C:\Users\massi\Downloads\segmentation_models-master\images\complete_unsupervised_results_2020_20\\"
+input_names = { 
+
+"VV_Osti_S1_2018-09-16.tif": ["VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_target_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_est_input_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_output_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__4VVaVH_mobilenetv24_Fractal_Net_New3_target_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_output_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__4VV_mobilenetv24_Fractal_Net_New3_target_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_output_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__3VVaVH_mobilenetv23_Fractal_Net_New3_target_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_output_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__3VV_mobilenetv23_Fractal_Net_New3_target_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_output_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__2VVaVH_mobilenetv22_Fractal_Net_New3_target_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_output_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__2VV_mobilenetv22_Fractal_Net_New3_target_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_output_1_wpatches128.tif",
+"VVaVH_Testing1_B11_8_4__1VVaVH_mobilenetv21_Fractal_Net_New3_target_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_est_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_est_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_inputVH_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_inputVV_1_wpatches128.tif",
+"VV_Testing1_B11_8_4__1VV_mobilenetv21_Fractal_Net_New3_output_1_wpatches128.tif"]
+
+}
+
+for name in input_names.keys(): 
+    print(path_inp + name)
+    b1 = gdal.Open(os.path.join(path_inp, name ),gdal.GA_ReadOnly) 
+    proj2   = b1.GetProjection()
+    geot2 = b1.GetGeoTransform()
+    for n in input_names[name]: 
+        print(path_out + n)
+
+        b2 = gdal.Open(os.path.join(path_out ,n), gdal.GA_Update)
+        b2.SetProjection(proj2)
+        b2.SetGeoTransform(geot2)
+
+
+otbcli_Superimpose -inr QB_Toulouse_Ortho_PAN.tif -inm QB_Toulouse_Ortho_XS.tif -out SuperimposedXS_to_PAN.tif

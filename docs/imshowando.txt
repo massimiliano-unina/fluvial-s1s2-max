@@ -1,0 +1,36 @@
+% clear all, close all, clc; 
+clear all; close all; clc; 
+
+comb = {'VH', 'VV','Ratio','VVaVH', 'VVaVHaSum','VVaVHaRatio','VVaVHaDiff','Total'}%{'VVaVH'}% 
+model_name = {'Unet4','Linknet4','FPN4'}%,'PSPNet'{'Unet3'}%{'Unet_despeck3_'}% {'Unet'}
+
+for combin = 1:length(comb) 
+    for jj = 1:length(model_name)   
+
+        load([comb{combin},'_mobilenetv2_',model_name{jj},'_wvariables_50.mat'])
+
+
+for k = 5:5:25%0:24%259:2:289%196:10:271%1:5:11%1:6:49%2:40%8
+inp = imread(['C:\Users\massi\Downloads\segmentation_models-master\',comb{combin},'_mobilenetv2_',model_name{jj},'_VV_',num2str(k-1),'_wpatches128.tif']);
+
+tar = imread(['C:\Users\massi\Downloads\segmentation_models-master\',comb{combin},'_mobilenetv2_',model_name{jj},_target_',num2str(k-1),'_wpatches128.tif']);
+out = imread(['C:\Users\massi\Downloads\segmentation_models-master\',comb{combin},'_mobilenetv2_',model_name{jj},'_output_',num2str(k-1),'_wpatches128.tif']);
+out2 = single(out > 0.5); 
+%tarb = imread(['C:\Users\massi\Downloads\segmentation_models-master\VVaVH_mobilenetv2_Unet3_target_',num2str(k-1),'_wpatches128.tif']);
+%outb = imread(['C:\Users\massi\Downloads\segmentation_models-master\VVaVH_mobilenetv2_Unet3_output_',num2str(k-1),'_wpatches128.tif']);
+%outb2 = single(outb > 0.5); 
+
+figure,
+subplot(131); imshow(tar,[]); title('target')
+% subplot(242); imshow(out,[])
+subplot(132); imshow(out2,[]); title('output Despeckling')
+subplot(133); imshow(out2.*tar,[]); title('Black for errors')
+% subplot(245); imshow(tarb,[])
+
+%subplot(234); imshow(inp,[]); title('input')
+%subplot(235); imshow(outb2,[]); title('output No-%Despeckling')
+% subplot(236); imshow(outb2.*tarb,[]); title('Black for errors')
+
+end
+end
+end
